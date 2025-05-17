@@ -11,7 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.muzaffar.noteapproom.database.NotesDatabase
+import com.muzaffar.noteapproom.repository.NoteRepository
+import com.muzaffar.noteapproom.ui.screens.NoteScreen
 import com.muzaffar.noteapproom.ui.theme.NoteAppRoomTheme
+import com.muzaffar.noteapproom.viewmodel.NoteViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,28 +24,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             NoteAppRoomTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    // Create the instance of db, repository, viewModel
+                    val database = NotesDatabase.getDatabase(applicationContext)
+                    val repository = NoteRepository(database.noteDao())
+                    val viewModel = NoteViewModel(repository)
+
+                    NoteScreen(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
+
                 }
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     NoteAppRoomTheme {
-        Greeting("Android")
+
     }
 }
